@@ -1,6 +1,3 @@
-// api/r/[slug].js
-// Serve a página de redirecionamento para cada cliente
-
 import { Redis } from '@upstash/redis';
 
 export default async function handler(req, res) {
@@ -8,8 +5,12 @@ export default async function handler(req, res) {
 
   if (!slug) return res.status(400).send('Slug inválido.');
 
-  const redis = Redis.fromEnv();
+  const redis = new Redis({
+    url: process.env.KV_REST_API_URL,
+    token: process.env.KV_REST_API_TOKEN,
+  });
   const raw = await redis.get(`redirect:${slug}`);
+
   if (!raw) {
     return res.status(404).send(`
       <!DOCTYPE html><html><head><meta charset="UTF-8"><title>404</title></head>
@@ -21,7 +22,6 @@ export default async function handler(req, res) {
 
   const { desktopUrl, mobileUrl, company } = typeof raw === 'string' ? JSON.parse(raw) : raw;
 
-  // Retorna HTML que detecta dispositivo e redireciona
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'no-cache');
   return res.status(200).send(`<!DOCTYPE html>
