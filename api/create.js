@@ -9,6 +9,12 @@ export default async function handler(req, res) {
       url: process.env.KV_REST_API_URL,
       token: process.env.KV_REST_API_TOKEN,
   });
+        
+    await redis.set(`redirect:${finalAlias}`, {
+          desktopUrl,
+          mobileUrl,
+          company
+        });
   
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
