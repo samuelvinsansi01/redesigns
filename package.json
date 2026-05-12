@@ -1,0 +1,9 @@
+{
+  "name": "redirect-link-generator",
+  "version": "1.0.0",
+  "description": "Smart redirect generator — routes desktop/mobile to different prototypes",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}
