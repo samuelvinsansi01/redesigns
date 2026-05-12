@@ -2,6 +2,19 @@
 // Uses TinyURL API v2 with Bearer token (set TINYURL_TOKEN in Vercel env vars)
 
 export default async function handler(req, res) {
+  import { Redis } from '@upstash/redis';
+
+  const redis = new Redis({
+      url: process.env.KV_REST_API_URL,
+      token: process.env.KV_REST_API_TOKEN,
+  });
+
+  const redis = new Redis({
+      url: process.env.KV_REST_API_URL,
+      token: process.env.KV_REST_API_TOKEN,
+  });
+
+  
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -25,6 +38,12 @@ export default async function handler(req, res) {
     .replace(/^-|-$/g, '');
 
   const finalAlias = safeAlias.endsWith('-rd') ? safeAlias : `${safeAlias}-rd`;
+
+  await redis.set(`redirect:${safeAlias}`, {
+      desktopUrl: url,   // ou substitua se tiver separado
+      mobileUrl: url,    // (ou adapte se você já tem separado)
+      company: safeAlias
+  });
 
   try {
     // TinyURL API v2 — authenticated endpoint supports custom alias + update
