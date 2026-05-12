@@ -1,6 +1,16 @@
 import { Redis } from '@upstash/redis';
 
 export default async function handler(req, res) {
+
+    import { Redis } from '@upstash/redis';
+
+    export default async function handler(req, res) {
+
+    const redis = new Redis({
+      url: process.env.KV_REST_API_URL,
+      token: process.env.KV_REST_API_TOKEN,
+  });
+      
   const { slug } = req.query;
 
   if (!slug) return res.status(400).send('Slug inválido.');
