@@ -1,6 +1,3 @@
-// api/create.js
-// Salva o redirect no Upstash Redis e encurta via TinyURL
-
 import { Redis } from '@upstash/redis';
 
 export default async function handler(req, res) {
@@ -18,7 +15,6 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'company, desktopUrl e mobileUrl são obrigatórios.' });
   }
 
-  // Sanitiza o slug
   const slug = (alias || company)
     .toLowerCase()
     .replace(/[^a-z0-9-]/g, '-')
@@ -27,15 +23,15 @@ export default async function handler(req, res) {
 
   const finalAlias = slug.endsWith('-rd') ? slug : `${slug}-rd`;
 
-  // Salva no Upstash Redis: chave = slug, valor = { desktopUrl, mobileUrl }
-  const redis = Redis.fromEnv();
+  const redis = new Redis({
+    url: process.env.KV_REST_API_URL,
+    token: process.env.KV_REST_API_TOKEN,
+  });
   await redis.set(`redirect:${slug}`, JSON.stringify({ desktopUrl, mobileUrl, company }));
 
-  // URL da página de redirect deste cliente
   const baseUrl = `https://${req.headers.host}`;
   const redirectPageUrl = `${baseUrl}/r/${slug}`;
 
-  // Encurta via TinyURL API v2
   try {
     const tinyRes = await fetch('https://api.tinyurl.com/create', {
       method: 'POST',
