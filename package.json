@@ -1,9 +1,9 @@
 {
   "name": "redirect-link-generator",
-  "version": "1.0.0",
-  "description": "Smart redirect generator — routes desktop/mobile to different prototypes",
+  "version": "2.0.0",
   "private": true,
-  "engines": {
-    "node": ">=18"
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@upstash/redis": "^1.34.0"
   }
 }
